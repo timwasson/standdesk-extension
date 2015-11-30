@@ -19,7 +19,7 @@ setInterval(function(){
   // Only run this on certain days and certain times
   var today = new Date();
   // Don't run on the weekends (6 and 0) or before/after certain hours (8 and 5)
-  if(today.getDay() !=6 && today.getDay() != 0 && today.getHours() >= 8 && today.getHours() <= 5) {
+  if(today.getDay() !=6 && today.getDay() != 0 && today.getHours() >= 8 && today.getHours() <= 17) {
     timer++;
     console.log("time: " + timer);
     if(sitStand == 'stand' && timer >= standDuration) {
