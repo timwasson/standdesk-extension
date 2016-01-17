@@ -1,21 +1,27 @@
 $( document ).ready(function() {
-  
   var bg = chrome.extension.getBackgroundPage();
-  var timer = bg.timer;
-  var sitStand = bg.sitStand;
-  var sitDuration = bg.sitDuration;
-  var standDuration = bg.standDuration;
   
-  var timeRemains = function() {
-    if (sitStand == 'sit') {
-      return sitDuration - timer;
-    } else if (sitStand == 'stand') {
-      return standDuration - timer;
-    }
+  function updateStatus() {
+    var timer = bg.timeRem;
+    var status = bg.status;
+    var distance = bg.distance;
+    
+    $("p#timer").text(timer);
+    $("#distance").text(Math.round(distance) + "cm");
+    $("#status").text(status);
   }
   
-  $("p#timer").text(timeRemains() + " remaining");
-  $("#sitDur").text(sitDuration);
-  $("#standDur").text(standDuration);
-  $("#sitStand").text(sitStand);
+  updateStatus();
+  
+  setInterval(function() {
+    updateStatus();
+  }, 1000);
+  
+  // Up and down buttons
+  $("#up").on("click", function() {
+    $.ajax("http://10.0.1.47:3000/up");
+  });
+  $("#down").on("click", function() {
+    $.ajax("http://10.0.1.47:3000/down");
+  });
 });

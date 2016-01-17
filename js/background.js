@@ -1,41 +1,54 @@
-var sitDuration, standDuration;
+/* Get Chrome Options for Notifications */
 
-/* Get Chrome Options for sitting and standing durations */
-chrome.storage.sync.get('sitDuration', function(response) {
-  //console.log(response.sitDuration);
-  sitDuration = response.sitDuration;
+var displayNotifications, playAudio;
+
+chrome.storage.sync.get('displayNotifications', function(response) {
+  displayNotifications = response.displayNotifications;
 });
 
-chrome.storage.sync.get('standDuration', function(response) {
-  standDuration = response.standDuration;
+chrome.storage.sync.get('playAudio', function(response) {
+  playAudio = response.playAudio;
 });
 
-// Set the timer at zero and force a stand
-var timer = 0;
-var sitStand = 'stand';
-$.ajax("http://10.0.1.47:3000/up");
+/* End Chrome Options */
 
-setInterval(function(){
-  // Only run this on certain days and certain times
-  var today = new Date();
-  // Don't run on the weekends (6 and 0) or before/after certain hours (8 and 5)
-  if(today.getDay() !=6 && today.getDay() != 0 && today.getHours() >= 8 && today.getHours() <= 17) {
-    timer++;
-    console.log("time: " + timer);
-    if(sitStand == 'stand' && timer >= standDuration) {
-      // AJAX CALL TO SIT
-      $.ajax("http://10.0.1.47:3000/down");
-      timer = 0;
-      sitStand = 'sit';
-    } else if(sitStand == 'sit' && timer >= sitDuration) {
-      // AJAX CALL TO STAND
-      $.ajax("http://10.0.1.47:3000/up");
-      timer = 0;
-      sitStand = 'stand';
-    }
+var timeRem, status, distance, notification;
+
+function SecondsTohhmmss(totalSeconds) {
+    var hours   = Math.floor(totalSeconds / 3600);
+    var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+    var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+  
+    // round seconds
+    seconds = Math.round(seconds * 100) / 100
+  
+    var result = (hours < 10 ? "0" + hours : hours);
+      result += ":" + (minutes < 10 ? "0" + minutes : minutes);
+      result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
+    return result;
   }
-}, 
-// 1 minute
-60000
-);
 
+setInterval(function() {
+  $.getJSON("http://10.0.1.47:3000/status", function(data){
+    timeRem = SecondsTohhmmss(data.timeRemain);
+    status = data.status;
+    distance = data.distance;
+    console.log(data);
+    
+    // Notify
+    if(data.timeRemain == 30) {
+      var options = {
+        body: "Desk is about to move",
+        icon: "../icons/logo_48.png"
+      }
+      if (displayNotifications == true) {
+        notification = new Notification("StandDesk",options);
+      }
+      if (playAudio == true) {
+        new Audio('../mp3/preparetoelevate.mp3').play();  
+      }
+      console.log("Notified");
+    }
+  });
+}
+, 1000);

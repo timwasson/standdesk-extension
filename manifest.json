@@ -25,6 +25,7 @@
   "permissions": [
     "background",
     "storage",
+    "notifications",
     "http://10.0.1.47:3000/"
   ],
   "options_ui": {

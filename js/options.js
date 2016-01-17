@@ -6,25 +6,25 @@ $( document ).ready(function() {
   
   function restore_options() {
     // Use default value color = 'red' and likesColor = true.
-    chrome.storage.sync.get('sitDuration', function(response) {
-      $("#sitdur").val(response.sitDuration);
+    chrome.storage.sync.get('displayNotifications', function(response) {
+      $("#displayNotifications").prop("checked", response.displayNotifications);
     });
-    chrome.storage.sync.get('standDuration', function(response) {
-      $("#standdur").val(response.standDuration);
+    chrome.storage.sync.get('playAudio', function(response) {
+      $("#playAudio").prop("checked", response.playAudio);
     });
   }
   restore_options();
   
   $("#save_opt").on("click", function(e) {
     e.preventDefault();
-    var sitdur = $("#sitdur").val();
-    var standdur = $("#standdur").val();
-    console.log(sitdur);
-    $("#status").text(sitdur);
+    var displayNotifications = $("#displayNotifications").is(':checked');
+    var playAudio = $("#playAudio").is(':checked');
+    console.log("Audio: " + playAudio);
+    console.log("Notifications: " + displayNotifications);
     
     chrome.storage.sync.set({
-      sitDuration: sitdur,
-      standDuration: standdur
+      playAudio: playAudio,
+      displayNotifications: displayNotifications
     }, function() {
       $("#status").text("saved");
     });
