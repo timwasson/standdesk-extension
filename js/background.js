@@ -33,6 +33,7 @@ setInterval(function() {
     timeRem = SecondsTohhmmss(data.timeRemain);
     status = data.status;
     distance = data.distance;
+    paused = data.paused;
     console.log(data);
     
     // Notify
